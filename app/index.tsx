@@ -1,36 +1,35 @@
-import { useEffect } from "react";
-import { Text, View } from "react-native";
-import { supabase } from "../src/services/supabase";
+import AuthForm from "@/src/components/authForm/authForm";
+import StepCounter from "@/src/components/stepsSensors/stepCounter";
+import { useState } from "react";
+import { Button, Text, View } from "react-native";
+import { useAuth } from "../src/hooks/useAuth";
 
 export default function Home() {
+  const { user, signUp, signIn, logout } = useAuth();
 
-  useEffect(() => {
-    async function test() {
-      console.log("🔍 Iniciando teste...");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-      // 🔎 TESTE 1 - SELECT
-      const { data: selectData, error: selectError } = await supabase
-        .from("test")
-        .select("*");
+  if (user) {
+    return (
+      <View style={{ padding: 20 }}>
+        <Text>Bem-vindo!</Text>
+        <Text>{user.email}</Text>
+        <StepCounter user={user} />
 
-      console.log("SELECT DATA:", selectData);
-      console.log("SELECT ERROR:", selectError);
-
-      // 🧪 TESTE 2 - INSERT
-      const { data: insertData, error: insertError } = await supabase
-        .from("test")
-        .insert([{ name: "Bruno" }]);
-
-      console.log("INSERT DATA:", insertData);
-      console.log("INSERT ERROR:", insertError);
-    }
-
-    test();
-  }, []);
+        <Button title="Logout" onPress={logout} />
+      </View>
+    );
+  }
 
   return (
-    <View>
-      <Text>Testando Supabase...</Text>
-    </View>
+    <AuthForm
+      email={email}
+      password={password}
+      setEmail={setEmail}
+      setPassword={setPassword}
+      onSignUp={() => signUp(email, password)}
+      onSignIn={() => signIn(email, password)}
+    />
   );
 }
