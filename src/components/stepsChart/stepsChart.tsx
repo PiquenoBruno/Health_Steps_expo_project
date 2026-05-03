@@ -48,7 +48,7 @@ export default function StepsChart() {
   }, [user]);
 
   return (
-    <View style={{ marginTop: 20 }}>
+    <View style={{ marginTop: 20, marginBottom: 40, alignItems: 'center'}}>
       <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}>
         Últimos 7 dias
       </Text>
@@ -72,7 +72,7 @@ export default function StepsChart() {
           color: (opacity = 1) => `rgba(76, 175, 80, ${opacity})`,
           labelColor: () => "#000",
           style: {
-            borderRadius: 16,
+            borderRadius: 22,
           },
         }}
         style={{

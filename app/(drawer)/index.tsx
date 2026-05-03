@@ -1,8 +1,9 @@
 import AuthForm from "@/src/components/authForm/authForm";
 import StepCounter from "@/src/components/stepsSensors/stepCounter";
+import colors from "@/src/constants/colors";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function Home() {
   const { user, signUp, signIn } = useAuth();
@@ -12,7 +13,7 @@ export default function Home() {
 
   if (user) {
     return (
-      <View style={{ padding: 20 }}>
+      <View style={styles.conteiner}>
         <StepCounter user={user} />
       </View>
     );
@@ -29,3 +30,13 @@ export default function Home() {
     />
   );
 }
+
+const styles = StyleSheet.create({
+    conteiner: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background
+    }
+}) 
+
