@@ -108,13 +108,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.color1,
     marginBottom: 10,
-  },
+  },  
 
   chartContainer: {
     marginBottom: 20,
     padding: 15,
     backgroundColor: colors.color1,
     borderRadius: 20,
+
 
     // sombra iOS
     shadowColor: "#000",

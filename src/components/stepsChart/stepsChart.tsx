@@ -1,36 +1,48 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import { supabase } from "@/src/services/supabase";
 import { useEffect, useState } from "react";
-import { Dimensions, Text, View } from "react-native";
+import { ActivityIndicator, Dimensions, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
 export default function StepsChart() {
   const { user } = useAuth();
   const [data, setData] = useState<number[]>([]);
   const [labels, setLabels] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadChart() {
       if (!user) return;
 
-      //  últimos 7 dias
+      setLoading(true);
+
       const today = new Date();
       const dates: string[] = [];
 
+      //últimos 7 dias
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(today.getDate() - i);
         dates.push(d.toISOString().split("T")[0]);
       }
 
-      //  buscar dados do banco
-      const { data: stepsData } = await supabase
+      //buscar dados apenas dos últimos 7 dias
+      const { data: stepsData, error } = await supabase
         .from("steps")
         .select("date, steps")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .gte("date", dates[0]);
 
-      //  organizar dados
-      const stepsMap: any = {};
+      if (error) {
+        console.error(error);
+        setData([0, 0, 0, 0, 0, 0, 0]);
+        setLabels(dates.map((date) => new Date(date).getDate().toString()));
+        setLoading(false);
+        return;
+      }
+
+      //organizar dados
+      const stepsMap: Record<string, number> = {};
       stepsData?.forEach((item) => {
         stepsMap[item.date] = item.steps;
       });
@@ -42,13 +54,22 @@ export default function StepsChart() {
 
       setData(formattedData);
       setLabels(formattedLabels);
+      setLoading(false);
     }
 
     loadChart();
   }, [user]);
 
+  if (loading) {
+    return (
+      <View style={{ marginTop: 20, alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
+  }
+
   return (
-    <View style={{ marginTop: 20, marginBottom: 40, alignItems: 'center'}}>
+    <View style={{ marginTop: 20, marginBottom: 40, alignItems: "center" }}>
       <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}>
         Últimos 7 dias
       </Text>
@@ -64,7 +85,6 @@ export default function StepsChart() {
         }}
         width={Dimensions.get("window").width - 40}
         height={220}
-        yAxisSuffix=""
         chartConfig={{
           backgroundGradientFrom: "#fff",
           backgroundGradientTo: "#fff",
