@@ -11,7 +11,7 @@ export async function getUserGoal(userId: string) {
 
   if (error) {
     console.log("ERRO AO BUSCAR META:", error.message);
-    return 10000; // fallback
+    return 10000; 
   }
 
   return data.goal_steps;

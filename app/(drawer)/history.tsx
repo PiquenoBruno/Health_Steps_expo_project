@@ -1,8 +1,9 @@
 import StepsChart from "@/src/components/stepsChart/stepsChart";
+
 import colors from "@/src/constants/colors";
-import { useAuth } from "@/src/hooks/useAuth";
-import { supabase } from "@/src/services/supabase";
-import { useEffect, useState } from "react";
+
+import { useHistory } from "@/src/hooks/useHistory";
+
 import {
   ActivityIndicator,
   FlatList,
@@ -11,45 +12,21 @@ import {
   View,
 } from "react-native";
 
-type Step = {
-  date: string;
-  steps: number;
-};
-
 export default function History() {
-  const { user } = useAuth();
-  const [history, setHistory] = useState<Step[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadHistory() {
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("steps")
-        .select("date, steps")
-        .eq("user_id", user.id)
-        .order("date", { ascending: false });
-
-      if (error) {
-        console.log("ERRO HISTÓRICO:", error.message);
-      }
-
-      setHistory(data || []);
-      setLoading(false);
-    }
-
-    loadHistory();
-  }, [user]);
+  const {
+    user,
+    history,
+    loading,
+  } = useHistory();
 
   // loading
   if (loading) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.colorDestaque} />
+        <ActivityIndicator
+          size="large"
+          color={colors.colorDestaque}
+        />
       </View>
     );
   }
@@ -68,7 +45,9 @@ export default function History() {
   return (
     <View style={styles.container}>
       {/* HEADER */}
-      <Text style={styles.header}>Seus passos</Text>
+      <Text style={styles.header}>
+        Seus passos
+      </Text>
 
       {/* GRÁFICO */}
       <View style={styles.chartContainer}>
@@ -76,18 +55,27 @@ export default function History() {
       </View>
 
       {/* TÍTULO */}
-      <Text style={styles.title}>Histórico</Text>
+      <Text style={styles.title}>
+        Histórico
+      </Text>
 
       {/* LISTA */}
       <FlatList
         data={history}
         keyExtractor={(item) => item.date}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{
+          paddingBottom: 20,
+        }}
         renderItem={({ item }) => (
           <View style={styles.listItem}>
-            <Text style={styles.date}>{item.date}</Text>
-            <Text style={styles.steps}>{item.steps} passos</Text>
+            <Text style={styles.date}>
+              {item.date}
+            </Text>
+
+            <Text style={styles.steps}>
+              {item.steps} passos
+            </Text>
           </View>
         )}
       />
