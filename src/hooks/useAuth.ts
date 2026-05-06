@@ -6,24 +6,40 @@ import { supabase } from "../services/supabase";
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
 
-  //  CADASTRO
+  // 🚀 CADASTRO
   async function signUp(email: string, password: string) {
     if (!email || !password) {
       return { error: { message: "Preencha email e senha" } };
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) {
       console.log("ERRO CADASTRO:", error.message);
-    } else {
-      console.log("Usuário cadastrado!");
+      return { error };
     }
 
-    return { error };
+    const user = data.user;
+
+    // 🔥 cria profile automaticamente
+    if (user) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert({
+          id: user.id,
+          goal_steps: 10000,
+        });
+
+      if (profileError) {
+        console.log("ERRO PROFILE:", profileError.message);
+      }
+    }
+
+    console.log("Usuário cadastrado!");
+    return { error: null };
   }
 
   // 🔑 LOGIN
@@ -39,20 +55,20 @@ export function useAuth() {
 
     if (error) {
       console.log("ERRO LOGIN:", error.message);
-    } else {
-      console.log("Login realizado!");
+      return { error };
     }
 
-    return { error };
+    console.log("Login realizado!");
+    return { error: null };
   }
 
-  //  LOGOUT
+  // 🚪 LOGOUT
   async function logout() {
     await supabase.auth.signOut();
     setUser(null);
   }
 
-  //  SESSÃO
+  // 🔄 SESSÃO
   useEffect(() => {
     async function checkSession() {
       const { data } = await supabase.auth.getSession();

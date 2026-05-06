@@ -34,6 +34,15 @@ function CustomDrawer(props: any) {
         />
 
         <DrawerItem
+          label="Perfil"
+          labelStyle={[
+            styles.label,
+            activeRoute === "profile" && styles.activeLabel,
+          ]}
+          onPress={() => props.navigation.navigate("profile")}
+        />
+
+        <DrawerItem
           label="Histórico"
           labelStyle={[
             styles.label,
@@ -42,6 +51,9 @@ function CustomDrawer(props: any) {
           onPress={() => props.navigation.navigate("history")}
         />
       </View>
+
+
+
 
       {/* FOOTER */}
       <View style={styles.footer}>
@@ -92,7 +104,7 @@ export default function Layout() {
             fontWeight: "bold", 
             color: colors.textcolor1 
           }}>
-            HealthSteps
+            HealthSteps :)
           </Text>
         ),      
       }}

@@ -9,6 +9,15 @@ import {
   View,
 } from "react-native";
 
+type Props = {
+  email: string;
+  password: string;
+  setEmail: (value: string) => void;
+  setPassword: (value: string) => void;
+  onSignUp: (email: string, password: string) => Promise<any>;
+  onSignIn: (email: string, password: string) => Promise<any>;
+};
+
 export default function AuthForm({
   email,
   password,
@@ -16,10 +25,11 @@ export default function AuthForm({
   setPassword,
   onSignUp,
   onSignIn,
-}: any) {
+}: Props) {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function validateFields() {
     let valid = true;
@@ -42,9 +52,14 @@ export default function AuthForm({
   }
 
   async function handleSignIn() {
-    validateFields();
+    const valid = validateFields();
+    if (!valid) return;
+
+    setLoading(true);
 
     const { error } = await onSignIn(email, password);
+
+    setLoading(false);
 
     if (error) {
       setGeneralError("Email ou senha incorretos");
@@ -54,9 +69,14 @@ export default function AuthForm({
   }
 
   async function handleSignUp() {
-    validateFields();
+    const valid = validateFields();
+    if (!valid) return;
+
+    setLoading(true);
 
     const { error } = await onSignUp(email, password);
+
+    setLoading(false);
 
     if (error) {
       setGeneralError(error.message);
@@ -67,14 +87,12 @@ export default function AuthForm({
 
   return (
     <View style={styles.container}>
-      {/* ERRO GERAL */}
       {generalError ? (
         <View style={styles.errorBox}>
           <Text style={styles.errorBoxText}>{generalError}</Text>
         </View>
       ) : null}
 
-      {/* EMAIL */}
       <Text style={styles.label}>Email</Text>
       <TextInput
         value={email}
@@ -84,17 +102,13 @@ export default function AuthForm({
           setGeneralError("");
         }}
         placeholder="Digite seu email"
-        placeholderTextColor="#999"
         style={[
           styles.input,
           emailError ? styles.inputError : null,
         ]}
       />
-      {emailError ? (
-        <Text style={styles.error}>{emailError}</Text>
-      ) : null}
+      {emailError && <Text style={styles.error}>{emailError}</Text>}
 
-      {/* SENHA */}
       <Text style={styles.label}>Senha</Text>
       <TextInput
         value={password}
@@ -105,21 +119,17 @@ export default function AuthForm({
         }}
         secureTextEntry
         placeholder="Digite sua senha"
-        placeholderTextColor="#999"
         style={[
           styles.input,
           passwordError ? styles.inputError : null,
         ]}
       />
-      {passwordError ? (
-        <Text style={styles.error}>{passwordError}</Text>
-      ) : null}
+      {passwordError && <Text style={styles.error}>{passwordError}</Text>}
 
-      {/* BOTÕES */}
       <View style={styles.buttonContainer}>
         <View style={styles.button}>
           <Button
-            title="Cadastrar"
+            title={loading ? "Carregando..." : "Cadastrar"}
             onPress={handleSignUp}
             color={colors.color1}
           />
@@ -127,7 +137,7 @@ export default function AuthForm({
 
         <View style={styles.button}>
           <Button
-            title="Login"
+            title={loading ? "Carregando..." : "Login"}
             onPress={handleSignIn}
             color={colors.colorDestaque}
           />
