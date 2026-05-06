@@ -117,13 +117,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
 
 
-    // sombra iOS
+    
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
 
-    // sombra Android
+
     elevation: 5,
   },
 

@@ -1,3 +1,4 @@
+import colors from "@/src/constants/colors";
 import { useAuth } from "@/src/hooks/useAuth";
 import { supabase } from "@/src/services/supabase";
 import { useEffect, useState } from "react";
@@ -70,7 +71,7 @@ export default function StepsChart() {
 
   return (
     <View style={{ marginTop: 20, marginBottom: 40, alignItems: "center" }}>
-      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10 }}>
+      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10, color:colors.textcolor1}}>
         Últimos 7 dias
       </Text>
 

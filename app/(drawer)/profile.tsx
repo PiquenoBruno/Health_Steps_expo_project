@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.color1,
     padding: 15,
     borderRadius: 15,
     marginBottom: 15,
@@ -176,23 +176,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 10,
+    color: colors.textcolor1
   },
 
   value: {
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 10,
+    color: colors.textcolor1,
   },
 
   input: {
-    borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 22,
     padding: 10,
     marginBottom: 10,
+    color: colors.textcolor1,
+    backgroundColor: colors.color3
   },
 
   saveButton: {
-    backgroundColor: colors.color1,
+    backgroundColor: colors.colorDestaque,
     padding: 10,
     borderRadius: 10,
     alignItems: "center",
@@ -206,6 +209,7 @@ const styles = StyleSheet.create({
   stat: {
     fontSize: 16,
     marginBottom: 5,
+    color: colors.textcolor1
   },
 
   logoutButton: {
