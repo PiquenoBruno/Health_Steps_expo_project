@@ -1,5 +1,6 @@
 import colors from "@/src/constants/colors";
 import { useAuth } from "@/src/hooks/useAuth";
+import { supabase } from "@/src/services/supabase";
 import { getUserGoal, updateUserGoal } from "@/src/services/user";
 import { useEffect, useState } from "react";
 import {
@@ -17,11 +18,13 @@ export default function Profile() {
   const [newGoal, setNewGoal] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // carregar meta
+  const [bestDay, setBestDay] = useState(0);
+  const [avgSteps, setAvgSteps] = useState(0);
+
+  //  carregar meta
   useEffect(() => {
     async function loadGoal() {
       if (!user) return;
-
       const g = await getUserGoal(user.id);
       setGoal(g);
     }
@@ -29,15 +32,39 @@ export default function Profile() {
     loadGoal();
   }, [user]);
 
-  // atualizar meta
+  //  carregar estatísticas
+  useEffect(() => {
+    async function loadStats() {
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("steps")
+        .select("steps")
+        .eq("user_id", user.id);
+
+      if (!data || data.length === 0) return;
+
+      const values = data.map((d) => d.steps);
+
+      const best = Math.max(...values);
+      const avg = Math.floor(
+        values.reduce((a, b) => a + b, 0) / values.length
+      );
+
+      setBestDay(best);
+      setAvgSteps(avg);
+    }
+
+    loadStats();
+  }, [user]);
+
+  //  atualizar meta
   async function handleUpdateGoal() {
     if (!user) return;
 
     const goalNumber = Number(newGoal);
 
-    if (!goalNumber || goalNumber < 1000) {
-      return;
-    }
+    if (!goalNumber || goalNumber < 1000) return;
 
     setLoading(true);
 
@@ -54,46 +81,56 @@ export default function Profile() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <Text style={styles.notLoggedText}>Você precisa estar logado</Text>
+        <Text style={styles.notLoggedText}>
+          Você precisa estar logado
+        </Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>:)</Text>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Perfil</Text>
+        <Text style={styles.email}>{user.email}</Text>
+      </View>
 
-      {/* EMAIL */}
-      <Text style={styles.label}>Email</Text>
-      <Text style={styles.value}>{user.email}</Text>
+      {/* META */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>🎯 Meta diária</Text>
+        <Text style={styles.value}>{goal} passos</Text>
 
-      {/* META ATUAL */}
-      <Text style={styles.label}>Meta atual</Text>
-      <Text style={styles.value}>{goal} passos</Text>
+        <TextInput
+          value={newGoal}
+          onChangeText={setNewGoal}
+          placeholder="Nova meta (ex: 8000)"
+          keyboardType="numeric"
+          style={styles.input}
+        />
 
-      {/* ALTERAR META */}
-      <Text style={styles.label}>Nova meta</Text>
-      <TextInput
-        value={newGoal}
-        onChangeText={setNewGoal}
-        placeholder="Ex: 8000"
-        keyboardType="numeric"
-        style={styles.input}
-      />
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={handleUpdateGoal}
+          disabled={loading}
+        >
+          <Text style={styles.saveButtonText}>
+            {loading ? "Salvando..." : "Atualizar meta"}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity
-        style={styles.saveButton}
-        onPress={handleUpdateGoal}
-        disabled={loading}
-      >
-        <Text style={styles.saveButtonText}>
-          {loading ? "Salvando..." : "Salvar meta"}
-        </Text>
-      </TouchableOpacity>
+      {/* ESTATÍSTICAS */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>📊 Estatísticas</Text>
+
+        <Text style={styles.stat}>🔥 Melhor dia: {bestDay}</Text>
+        <Text style={styles.stat}>📈 Média: {avgSteps}</Text>
+      </View>
 
       {/* LOGOUT */}
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-        <Text style={styles.logoutText}>Logout</Text>
+        <Text style={styles.logoutText}>Sair</Text>
       </TouchableOpacity>
     </View>
   );
@@ -102,94 +139,92 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 20,
     backgroundColor: colors.background,
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
+  header: {
     marginBottom: 20,
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
     color: colors.color1,
   },
 
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginTop: 15,
-    marginBottom: 5,
+  email: {
+    fontSize: 14,
     color: colors.color2,
+    marginTop: 5,
+  },
+
+  card: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 15,
+    marginBottom: 15,
+
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
 
   value: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 22,
+    fontWeight: "bold",
     marginBottom: 10,
-    color: colors.color3,
   },
 
   input: {
     borderWidth: 1,
-    borderColor: colors.color3,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 5,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-
-    // sombra leve
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
   },
 
   saveButton: {
     backgroundColor: colors.color1,
-    paddingVertical: 12,
+    padding: 10,
     borderRadius: 10,
     alignItems: "center",
-
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
   },
 
   saveButtonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+
+  stat: {
     fontSize: 16,
+    marginBottom: 5,
   },
 
   logoutButton: {
     backgroundColor: colors.colorAlert,
-    paddingVertical: 12,
+    padding: 12,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 30,
-
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
+    marginTop: 20,
   },
 
   logoutText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 16,
   },
 
   notLoggedText: {
-    fontSize: 16,
-    color: colors.colorAlert,
-    fontWeight: "bold",
     textAlign: "center",
     marginTop: 50,
+    fontWeight: "bold",
+    color: colors.colorAlert,
   },
 });
