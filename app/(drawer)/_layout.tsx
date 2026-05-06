@@ -25,7 +25,7 @@ function CustomDrawer(props: any) {
       {/* MENU */}
       <View style={styles.menu}>
         <DrawerItem
-          label="Home"
+          label="Contador"
           labelStyle={[
             styles.label,
             activeRoute === "index" && styles.activeLabel, // aplica cor se ativo
@@ -109,7 +109,7 @@ export default function Layout() {
         ),      
       }}
     >
-      <Drawer.Screen name="index" options={{ title: "Home" }} />
+      <Drawer.Screen name="index" options={{ title: "Contador" }} />
       <Drawer.Screen name="history" options={{ title: "Histórico" }} />
     </Drawer>
   );

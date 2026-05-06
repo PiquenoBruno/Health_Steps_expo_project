@@ -81,7 +81,7 @@ export default function Profile() {
       {/* ESTATÍSTICAS */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>
-          📊 Estatísticas
+           Estatísticas
         </Text>
 
         <Text style={styles.stat}>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: colors.color1,
+    backgroundColor: colors.color2,
     padding: 15,
     borderRadius: 15,
     marginBottom: 15,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   stat: {
     fontSize: 16,
     marginBottom: 5,
-    color: colors.textcolor1
+    color: colors.textcolor1,
   },
 
   logoutButton: {
