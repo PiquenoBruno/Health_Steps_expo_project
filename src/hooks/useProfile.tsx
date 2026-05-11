@@ -1,10 +1,13 @@
 import { supabase } from "@/src/services/supabase";
+
 import {
-    getUserGoal,
-    updateUserGoal,
+  getUserGoal,
+  updateUserGoal,
 } from "@/src/services/user";
 
 import { User } from "@supabase/supabase-js";
+
+import { router } from "expo-router";
 
 import { useEffect, useState } from "react";
 
@@ -49,8 +52,8 @@ export function useProfile(user: User | null) {
       const best = Math.max(...values);
 
       const avg = Math.floor(
-        values.reduce((a, b) => a + b, 0)
-        / values.length
+        values.reduce((a, b) => a + b, 0) /
+          values.length
       );
 
       setBestDay(best);
@@ -67,7 +70,7 @@ export function useProfile(user: User | null) {
 
     const goalNumber = Number(newGoal);
 
-    if (!goalNumber || goalNumber < 1000) {
+    if (!goalNumber || goalNumber < 100) {
       return;
     }
 
@@ -84,6 +87,9 @@ export function useProfile(user: User | null) {
       setGoal(goalNumber);
 
       setNewGoal("");
+
+      // 🔥 força atualizar Home
+      router.replace("/");
     }
   }
 

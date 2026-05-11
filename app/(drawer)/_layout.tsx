@@ -28,7 +28,7 @@ function CustomDrawer(props: any) {
           label="Contador"
           labelStyle={[
             styles.label,
-            activeRoute === "index" && styles.activeLabel, // aplica cor se ativo
+            activeRoute === "index" && styles.activeLabel,
           ]}
           onPress={() => props.navigation.navigate("index")}
         />

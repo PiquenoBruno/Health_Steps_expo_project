@@ -5,15 +5,20 @@ import { User } from "@supabase/supabase-js";
 import { useFocusEffect } from "expo-router";
 import { Accelerometer } from "expo-sensors";
 import {
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
+import { motivationalMessages } from "../components/motivationalMessages/motivationalMessages";
+
 
 export function useStepCounter(user: User | null) {
   const [steps, setSteps] = useState(0);
   const [goal, setGoal] = useState(10000);
+
+  const [motivation, setMotivation] = useState("");
+  const [currentLevel, setCurrentLevel] = useState("");
 
   const lastStepTime = useRef(0);
   const prevMagnitude = useRef(0);
@@ -108,19 +113,61 @@ export function useStepCounter(user: User | null) {
 
   const progress = Math.min(steps / goal, 1);
 
-  function getMotivation() {
-    if (progress === 0) return "Vamos começar!";
-    if (progress < 0.25) return "Bora, você consegue!";
-    if (progress < 0.5) return "Ótimo ritmo!";
-    if (progress < 0.75) return "Já passou da metade!";
-    if (progress < 1) return "Quase lá!";
-    return "Meta atingida!";
+  // nível do progresso
+  function getProgressLevel(progress: number) {
+    if (progress === 0) return "start";
+    if (progress < 0.5) return "low";
+    if (progress < 0.8) return "medium";
+    if (progress < 1) return "high";
+
+    return "done";
   }
+
+  // pegar frase
+  function getMotivation(progress: number) {
+    const level = getProgressLevel(progress);
+
+    let messages: string[] = [];
+
+    if (level === "start") {
+      messages = motivationalMessages.start;
+    }
+
+    if (level === "low") {
+      messages = motivationalMessages.low;
+    }
+
+    if (level === "medium") {
+      messages = motivationalMessages.medium;
+    }
+
+    if (level === "high") {
+      messages = motivationalMessages.high;
+    }
+
+    if (level === "done") {
+      messages = motivationalMessages.done;
+    }
+
+    return messages[
+      Math.floor(Math.random() * messages.length)
+    ];
+  }
+
+  // atualizar frase
+  useEffect(() => {
+    const level = getProgressLevel(progress);
+
+    if (level !== currentLevel) {
+      setCurrentLevel(level);
+      setMotivation(getMotivation(progress));
+    }
+  }, [steps]);
 
   return {
     steps,
     goal,
     progress,
-    motivation: getMotivation(),
+    motivation,
   };
 }
