@@ -1,4 +1,4 @@
-# 🚶 HealthSteps :)
+# 💚 HealthSteps :)
 
 Aplicativo mobile desenvolvido com **React Native + Expo** para monitoramento de passos em tempo real utilizando o acelerômetro do dispositivo.
 
