@@ -1,63 +1,89 @@
-#  HealthSteps :) — App de Monitoramento de Passos
+# 🚶 HealthSteps :)
 
-Um aplicativo mobile desenvolvido com **React Native + Expo** que utiliza o acelerômetro do dispositivo para contar passos em tempo real, armazenar dados no banco e acompanhar progresso diário.
+Aplicativo mobile desenvolvido com **React Native + Expo** para monitoramento de passos em tempo real utilizando o acelerômetro do dispositivo.
 
----
-
-##  Funcionalidades
-
-* 🔐 Autenticação de usuários (login / cadastro)
-* 🚶‍♂️ Contagem de passos em tempo real (acelerômetro)
-* 💾 Salvamento automático no banco de dados
-* 📅 Histórico de passos por dia
-* 🎯 Meta diária personalizada
-* 📊 Barra de progresso estilo app fitness
-* 👤 Tela de perfil (visualizar e alterar meta)
-* 🔄 Sincronização automática com backend
+O app permite acompanhar metas diárias, visualizar histórico de atividades e salvar os dados automaticamente na nuvem com Supabase.
 
 ---
 
-##  Tecnologias utilizadas
+# 📱 Funcionalidades
 
-* ⚛️ React Native (Expo)
-* 🧭 Expo Router (navegação)
-* 📡 Supabase (auth + banco de dados)
-* 📱 Expo Sensors (acelerômetro)
-* 🎨 Styled UI (custom styles)
+- 🔐 Login e cadastro de usuários
+- 🚶‍♂️ Contagem de passos em tempo real
+- 🎯 Meta diária personalizada
+- 📊 Barra de progresso estilo app fitness
+- 📅 Histórico de passos
+- 📈 Gráfico dos últimos 7 dias
+- 👤 Tela de perfil com estatísticas
+- 💾 Salvamento automático no banco
+- ☁️ Integração com Supabase
+- 💬 Frases motivacionais dinâmicas
 
 ---
 
-## Estrutura do projeto
+# 🛠 Tecnologias utilizadas
 
-```
+- ⚛️ React Native
+- 🚀 Expo
+- 🧭 Expo Router
+- 📡 Supabase
+- 📱 Expo Sensors
+- 📊 react-native-chart-kit
+- 🎨 React Native StyleSheet
+
+---
+
+# 📂 Estrutura do projeto
+
+```bash
+app/
+ └── (drawer)/
+      ├── _layout.tsx
+      ├── history.tsx
+      ├── index.tsx
+      └── profile.tsx
+
 src/
  ├── components/
  │    ├── authForm/
- │    ├── stepsSensors/
- │
- ├── services/
- │    ├── supabase.ts
- │    ├── steps.ts
- │    └── user.ts
+ │    │    └── authForm.tsx
+ │    │
+ │    ├── home/
+ │    │    ├── GuestHome.tsx
+ │    │    └── LoggedHome.tsx
+ │    │
+ │    ├── motivationalMessages/
+ │    │    └── motivationalMessages.tsx
+ │    │
+ │    ├── statsCards/
+ │    │    └── statsCards.tsx
+ │    │
+ │    ├── stepsChart/
+ │    │    └── stepsChart.tsx
+ │    │
+ │    └── stepsSensors/
  │
  ├── hooks/
- │    └── useAuth.ts
+ │    ├── useAuth.ts
+ │    ├── useHistory.ts
+ │    ├── useProfile.tsx
+ │    ├── useStepCounter.ts
+ │    └── useStepsChart.ts
+ │
+ ├── services/
+ │    ├── steps.ts
+ │    ├── supabase.js
+ │    └── user.ts
  │
  └── constants/
-      └── colors.ts
-
-app/
- ├── (drawer)/
- │    ├── index.tsx      # Home (contador)
- │    ├── history.tsx    # Histórico
- │    └── profile.tsx    # Perfil
+      └── colors.js
 ```
 
 ---
 
-##  Como rodar o projeto
+# ⚙️ Como rodar o projeto
 
-### 1. Instalar dependências
+## 1. Instalar dependências
 
 ```bash
 npm install
@@ -65,15 +91,15 @@ npm install
 
 ---
 
-### 2. Configurar Supabase
+## 2. Configurar Supabase
 
 Crie um arquivo:
 
-```
-src/services/supabase.ts
+```bash
+src/services/supabase.js
 ```
 
-E adicione:
+Adicione:
 
 ```ts
 import { createClient } from "@supabase/supabase-js";
@@ -86,7 +112,7 @@ export const supabase = createClient(
 
 ---
 
-### 3. Rodar o app
+## 3. Rodar o app
 
 ```bash
 npx expo start
@@ -94,31 +120,39 @@ npx expo start
 
 ---
 
-## Como funciona
+# 🧠 Como funciona
 
-### Contagem de passos
+## 🚶 Contagem de passos
 
-O app usa o acelerômetro para detectar movimento:
+O aplicativo utiliza o acelerômetro do celular para detectar movimentação.
 
-* calcula magnitude do movimento
-* aplica filtro (remove gravidade)
-* detecta picos (passos)
-* evita duplicação com intervalo mínimo
+O sistema:
 
----
-
-### Salvamento
-
-* Os passos são salvos automaticamente a cada 5 segundos
-* Cada usuário tem registros por dia
+- calcula a magnitude do movimento
+- remove gravidade do sensor
+- detecta picos de movimento
+- identifica passos
+- evita duplicações com intervalo mínimo
 
 ---
 
-### Banco de dados (Supabase)
+## 💾 Salvamento automático
 
-#### Tabela: `steps`
+Os passos são salvos automaticamente no banco a cada 5 segundos.
 
-| campo   | tipo |
+Cada usuário possui:
+
+- histórico individual
+- metas personalizadas
+- estatísticas próprias
+
+---
+
+# 🗄 Banco de dados
+
+## Tabela: `steps`
+
+| Campo   | Tipo |
 | ------- | ---- |
 | id      | uuid |
 | user_id | uuid |
@@ -127,18 +161,29 @@ O app usa o acelerômetro para detectar movimento:
 
 ---
 
-#### Tabela: `profiles`
+## Tabela: `profiles`
 
-| campo      | tipo |
+| Campo      | Tipo |
 | ---------- | ---- |
 | id         | uuid |
 | goal_steps | int  |
 
 ---
 
+# 🎯 Objetivo do projeto
 
-##  Autor
+O projeto foi desenvolvido para fins acadêmicos, aplicando conceitos de:
 
-Desenvolvido por **Bruno Firmino Torres**
+- Mobile Development
+- Sensores IoT
+- Arquitetura de aplicações
+- Autenticação
+- Banco de dados em nuvem
+- Integração com APIs
+- Organização em hooks/services/components
 
 ---
+
+# 👨‍💻 Autor
+
+Desenvolvido por **Bruno Firmino Torres**
