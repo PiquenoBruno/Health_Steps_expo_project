@@ -34,7 +34,7 @@ export default function History() {
   // não logado
   if (!user) {
     return (
-      <View style={styles.notLogged}>
+      <View style={styles.container}>
         <Text style={styles.notLoggedText}>
           Você precisa estar logado
         </Text>
@@ -163,16 +163,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  notLogged: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-
   notLoggedText: {
-    fontSize: 16,
-    color: colors.colorAlert,
+    textAlign: "center",
+    marginTop: 50,
     fontWeight: "bold",
+    color: colors.colorAlert,
   },
 });
