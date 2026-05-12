@@ -4,15 +4,6 @@ Aplicativo mobile desenvolvido com **React Native + Expo** para monitoramento de
 
 O app permite acompanhar metas diárias, visualizar histórico de atividades e salvar os dados automaticamente na nuvem com Supabase.
 
-![Contador](images/Index.jpeg)
-![Historico](images/history.jpeg)
-![Menu lateral](images/menu.jpeg)
-![Perfil](images/perfil.jpeg)
-![Login e cadastro](images/login.jpeg)
-
-
-
-
 
 ---
 
@@ -197,3 +188,13 @@ O projeto foi desenvolvido para fins acadêmicos, aplicando conceitos de:
 # 👨‍💻 Autor
 
 Desenvolvido por **Bruno Firmino Torres**
+
+---
+
+# imagens do projeto
+
+<img src="images/Index.jpeg" alt="Contador" width="300"/>
+<img src="images/history.jpeg" alt="Histórico" width="300"/>
+<img src="images/menu.jpeg" alt="Menu lateral" width="300"/>
+<img src="images/perfil.jpeg" alt="Perfil" width="300"/>
+<img src="images/login.jpeg" alt="Login e cadastro" width="300"/>
