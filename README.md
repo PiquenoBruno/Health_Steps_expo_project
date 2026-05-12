@@ -194,11 +194,15 @@ Desenvolvido por **Bruno Firmino Torres**
 # imagens do projeto
 - Contador
 <img src="images/Index.jpeg" alt="Contador" width="300"/>
+
 - Histórico
 <img src="images/history.jpeg" alt="Histórico" width="300"/>
+
 - Menu lateral
 <img src="images/menu.jpeg" alt="Menu lateral" width="300"/>
+
 - Perfil
 <img src="images/perfil.jpeg" alt="Perfil" width="300"/>
--Login e cadastro
+
+- Login e cadastro
 <img src="images/login.jpeg" alt="Login e cadastro" width="300"/>
