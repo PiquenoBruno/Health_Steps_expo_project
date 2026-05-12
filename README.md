@@ -63,6 +63,7 @@ src/
  │    │    └── stepsChart.tsx
  │    │
  │    └── stepsSensors/
+ │    │    └── stepsCounter.tsx
  │
  ├── hooks/
  │    ├── useAuth.ts
