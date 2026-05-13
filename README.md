@@ -63,7 +63,7 @@ src/
  │    │    └── stepsChart.tsx
  │    │
  │    └── stepsSensors/
- │    │    └── stepsCounter.tsx
+ │         └── stepsCounter.tsx
  │
  ├── hooks/
  │    ├── useAuth.ts
@@ -77,6 +77,18 @@ src/
  │    ├── supabase.js
  │    └── user.ts
  │
+ ├── utils/
+ │    ├── getMotivation/
+ │    │    ├── getMotivation.ts
+ │    │    └── getMotivation.test.ts
+ │    │
+ │    ├── progress/
+ │    │    ├── progress.ts
+ │    │    └── progress.test.ts
+ │    │
+ │    └── stepDetection/
+ │         ├── stepDetection.ts
+ │         └── stepDetection.test.ts
  └── constants/
       └── colors.js
 ```
