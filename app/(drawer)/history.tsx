@@ -1,172 +1,115 @@
+import Filter from "@/src/components/history/filter/filter";
+import Header from "@/src/components/history/header/header";
+import HistoryList from "@/src/components/history/historyList/historyList";
+import SummaryCard from "@/src/components/history/summaryCard/summaryCard";
 import StepsChart from "@/src/components/stepsChart/stepsChart";
-
 import colors from "@/src/constants/colors";
-
 import { useHistory } from "@/src/hooks/useHistory";
+import { useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
 
 export default function History() {
-  const {
-    user,
-    history,
-    loading,
-  } = useHistory();
+  const { user, history, loading } = useHistory();
 
-  // loading
+  const [visibleCount, setVisibleCount] = useState<number>(10);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
   if (loading) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator
-          size="large"
-          color={colors.colorDestaque}
-        />
+        <ActivityIndicator size="large" color={colors.colorDestaque} />
       </View>
     );
   }
 
-  // não logado
   if (!user) {
     return (
       <View style={styles.container}>
-        <Text style={styles.notLoggedText}>
-          Você precisa estar logado
-        </Text>
+        <Text style={styles.notLoggedText}>Você precisa estar logado</Text>
       </View>
     );
   }
 
-  return (
-    <View style={styles.container}>
-      {/* HEADER */}
-      <Text style={styles.header}>
-        Seus passos
-      </Text>
+  const totalSteps = history.reduce((acc, item) => acc + item.steps, 0);
+  const avgSteps = Math.round(totalSteps / history.length);
 
-      {/* GRÁFICO */}
+  const sortedHistory = history.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
+  const filteredHistory = sortedHistory.filter((item) => {
+    if (!startDate || !endDate) return true;
+    const itemDate = new Date(item.date);
+    return itemDate >= startDate && itemDate <= endDate;
+  });
+
+  const applyQuickFilter = (days: number) => {
+    const today = new Date();
+    const past = new Date();
+    past.setDate(today.getDate() - days);
+    setStartDate(past);
+    setEndDate(today);
+    setVisibleCount(10);
+  };
+
+  const applyCurrentMonth = () => {
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    setStartDate(firstDay);
+    setEndDate(today);
+    setVisibleCount(10);
+  };
+
+  const clearFilter = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setVisibleCount(10);
+  };
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
+
+      <Header />
+
       <View style={styles.chartContainer}>
         <StepsChart />
       </View>
 
-      {/* TÍTULO */}
-      <Text style={styles.title}>
-        Histórico
-      </Text>
+      <SummaryCard totalSteps={totalSteps} avgSteps={avgSteps} />
 
-      {/* LISTA */}
-      <FlatList
-        data={history}
-        keyExtractor={(item) => item.date}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: 20,
-        }}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text style={styles.date}>
-              {item.date}
-            </Text>
-
-            <Text style={styles.steps}>
-              {item.steps} passos
-            </Text>
-          </View>
-        )}
+      <Filter
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+        clearFilter={clearFilter}
+        applyQuickFilter={applyQuickFilter}
+        applyCurrentMonth={applyCurrentMonth}
       />
-    </View>
+
+      {/* LISTA DE HISTÓRICO */}
+      <HistoryList
+        filteredHistory={filteredHistory}
+        visibleCount={visibleCount}
+        setVisibleCount={setVisibleCount}
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    backgroundColor: colors.background,
-  },
-
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.color1,
-    marginBottom: 10,
-  },  
-
+  container: { flex: 1, paddingHorizontal: 20, paddingTop: 20, backgroundColor: colors.background },
   chartContainer: {
     marginBottom: 20,
     padding: 15,
     backgroundColor: colors.color1,
     borderRadius: 20,
-
-
-    
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
-
-
     elevation: 5,
   },
-
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.color2,
-    marginBottom: 10,
-    marginLeft: 5,
-  },
-
-  listItem: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 10,
-
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 15,
-    shadowOffset: { width: 0, height: 8 },
-
-    elevation: 0.5,
-  },
-
-  date: {
-    fontSize: 14,
-    color: colors.color3,
-  },
-
-  steps: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: colors.color1,
-  },
-
-  listItemText: {
-    fontSize: 16,
-    color: colors.color2,
-  },
-
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  notLoggedText: {
-    textAlign: "center",
-    marginTop: 50,
-    fontWeight: "bold",
-    color: colors.colorAlert,
-  },
+  loading: { flex: 1, justifyContent: "center", alignItems: "center" },
+  notLoggedText: { textAlign: "center", marginTop: 50, fontWeight: "bold", color: colors.colorAlert },
 });
